@@ -1,4 +1,6 @@
-from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 from .models import Link
 from .serializers import LinkSerializer
@@ -6,6 +8,15 @@ from .serializers import LinkSerializer
 # Create your views here.
 
 
-class LinkViewSet(viewsets.ModelViewSet):
-    serializer_class = LinkSerializer
-    queryset = Link.objects.all()
+class LinkView(APIView):
+    def get(self, request, format=None):
+        links = Link.objects.all()
+        serializer = LinkSerializer(links, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = LinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -6,7 +6,7 @@ from .models import Link
 
 
 class LinkAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('url', 'shortened_url', 'created_by', 'created_at', 'expires_at', 'expired')
 
 
 admin.site.register(Link, LinkAdmin)

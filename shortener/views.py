@@ -5,8 +5,6 @@ from rest_framework import status
 from .models import Link
 from .serializers import LinkSerializer
 
-# Create your views here.
-
 
 class LinksView(APIView):
     def get(self, request, format=None):

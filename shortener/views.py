@@ -15,7 +15,12 @@ class LinkView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = LinkSerializer(data=request.data)
+        payload = {
+            'url': request.query_params.get('url'),
+            'created_by': request.query_params.get('created_by')
+        }
+
+        serializer = LinkSerializer(data=payload)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

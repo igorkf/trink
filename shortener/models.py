@@ -1,14 +1,14 @@
 import string
+from datetime import datetime, timedelta
 
 from django.db import models
-from django.utils import timezone
 
 
 # Create your models here.
 
 
-def timezone_delta(days: int):
-    return timezone.now() + timezone.timedelta(days=days)
+def datetime_delta():
+    return datetime.now() + timedelta(days=7)
 
 
 class Link(models.Model):
@@ -16,28 +16,14 @@ class Link(models.Model):
     shortened_url = models.CharField(max_length=100, editable=False)
     # TODO: make relation with User model
     created_by = models.CharField(max_length=100)
-    created_at = models.DateTimeField(default=timezone.now(), editable=False)
+    created_at = models.DateTimeField(default=datetime.now, editable=False)
     expires_at = models.DateTimeField(
-        default=timezone_delta(7), editable=False)
+        default=datetime_delta, editable=False)
     expired = models.BooleanField(default=False, editable=False)
-
-    @property
-    def shortened_url(self):
-        url2id = {}
-        id_ = int(1e7)
-
-        if self.url in url2id:
-            id_ = url2id[self.url]
-            new_url = self.encode(id_)
-        else:
-            url2id[self.url] = id_
-            new_url = self.encode(id_)
-            id_ += 1
-
-        return f'http://www.trink/{new_url}'
 
     def encode(self, id_):
         '''62 chars encoder'''
+        domain = 'https://trink.com.br/'
         characters = string.digits + string.ascii_letters
         base = len(characters)
 
@@ -47,11 +33,14 @@ class Link(models.Model):
             result.append(characters[val])
             id_ = id_ // base
 
-        return ''.join(result[::-1])
+        return domain + ''.join(result[::-1])
 
     def save(self, *args, **kwargs):
-        shortened_url = self.shortened_url
-        return super(Link, self).save(*args, **kwargs)
+        id_digits = int(1e8)
+        # get last id first
+        last_id = Link.objects.last().id
+        self.shortened_url = self.encode(last_id + id_digits)
+        super(Link, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.url

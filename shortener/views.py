@@ -8,12 +8,14 @@ from .serializers import LinkSerializer
 # Create your views here.
 
 
-class LinkView(APIView):
+class LinksView(APIView):
     def get(self, request, format=None):
         links = Link.objects.all()
         serializer = LinkSerializer(links, many=True)
         return Response(serializer.data)
 
+
+class ShortenerView(APIView):
     def post(self, request, format=None):
         payload = {
             'url': request.query_params.get('url'),

@@ -1,14 +1,14 @@
 import string
-from datetime import datetime, timedelta
 
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
 
 
-def datetime_delta():
-    return datetime.now() + timedelta(days=7)
+def timezone_delta():
+    return timezone.now() + timezone.timedelta(days=7)
 
 
 class Link(models.Model):
@@ -16,9 +16,9 @@ class Link(models.Model):
     shortened_url = models.CharField(max_length=100, editable=False)
     # TODO: make relation with User model
     created_by = models.CharField(max_length=100)
-    created_at = models.DateTimeField(default=datetime.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     expires_at = models.DateTimeField(
-        default=datetime_delta, editable=False)
+        default=timezone_delta, editable=False)
     expired = models.BooleanField(default=False, editable=False)
 
     def encode(self, id_):

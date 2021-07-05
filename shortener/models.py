@@ -37,9 +37,16 @@ class Link(models.Model):
 
     def save(self, *args, **kwargs):
         id_digits = int(1e8)
+
         # get last id first
-        last_id = Link.objects.last().id
+        last_link = Link.objects.last()
+        try:
+            last_id = last_link.id
+        except AttributeError:
+            last_id = 1
+
         self.shortened_url = self.encode(last_id + id_digits)
+
         super(Link, self).save(*args, **kwargs)
 
     def __str__(self):

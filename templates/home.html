@@ -8,7 +8,26 @@
     <h1>Trink</h1>
 
     {% if user.is_authenticated %}        
+        <h2>Links encurtados:</h2>
+
+        <table>
+            <tr>
+                <th>URL</th>
+                <th>URL encurtada</th>
+                <th>Criada em</th>
+                <th>Expira em</th>
+                {% for link in links %} %}
+                    <tr>
+                        <td>{{ link.url }}</td>
+                        <td>{{ link.shortened_url }}</td>
+                        <td>{{ link.created_at|date:'Y-m-d H:i' }}</td>
+                        <td>{{ link.expires_at|date:'Y-m-d H:i' }}</td>
+                    </tr>
+                {% endfor %}
+            </tr> 
+        </table>
         <p><a href="{% url 'logout' %}">Fazer logout</a></p>
+        
     {% else %}
         <p>Você não está logado.</p>
         <a href="{% url 'login' %}">Fazer login</a>

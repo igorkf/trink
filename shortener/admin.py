@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import Link
 
@@ -6,7 +7,8 @@ from .models import Link
 
 
 class LinkAdmin(admin.ModelAdmin):
-    list_display = ('url', 'shortened_url', 'created_by', 'created_at', 'expires_at', 'expired')
+    list_display = ('url', 'shortened_url', 'created_by',
+                    'created_at', 'expires_at', 'expired')
 
 
 admin.site.register(Link, LinkAdmin)

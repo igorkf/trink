@@ -10,12 +10,11 @@
     <h1>Trink</h1>
 
     {% if user.is_authenticated %}  
-        <h2>Encurtar link:</h2>
-        <form action="{% url 'shortener' %}" method="post">
+        <form action="." method="post" id="shorten-url">
             <label for="nome">URL:</label>
             <input type="text" name='url_input'/>
                 {% csrf_token %} {{ form.as_p }}
-                <button type="submit" id="shorten-url">Encurtar link</button>
+                <button type="submit" id="submit-button" onClick="refreshPage()">Encurtar link</button>
         </form>
 
         <h2>Links encurtados:</h2>
@@ -41,41 +40,47 @@
     {% block javascript %}
 
     <script>
-        {% comment %} $(function() {
-            $("#shorten-url").click(function() {
-                $.post(
-                    url: '{% url "shortener" %}',
-                    data: {'url': 'abcde'}
-                    success: function(data, status, xhr) {
-                       console.log(data)
-                    }
-                );
-                return false;
+        
+        $('#submit-button').click(function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "shortener" %}',
+                type: 'post',
+                dataType: 'json',
+                data: $('form#shorten-url').serialize(),
+                success: function(data) {
+                    console.log(data);
+                }
             });
-        }); {% endcomment %}
+        });
 
         $(function() {
             $.ajax({
-                    url: '{% url "links" %}',
-                    dataType: 'json',
-                    type: 'get',
-                    cache: false,
-                    success: function(data) {
-                        var event_data = '';
-                        $.each(data.links, function(index, value) {                            
-                            event_data += '<tr>';
-                            event_data += '<td><a href="' + value.url + '">' + value.url + '</td>';
-                            event_data += '<td><a href="' + '{% url "redirect" shortened_url=123 %}'.replace(/123/, value.shortened_url) + '">' + value.shortened_url + '</td>';
-                            event_data += '<td>' + value.created_at.slice(0, -8) + '</td>';
-                            event_data += '<td>' + value.expires_at.slice(0, -8) + '</td>';
-                            event_data += '</tr>';
-                        });
-                        $("#links-table").append(event_data);
-                    },
-                    error: function(d) {
-                    }
-                });
+                url: '{% url "links" %}',
+                dataType: 'json',
+                type: 'get',
+                cache: false,
+                success: function(data) {
+                    var event_data = '';
+                    $.each(data.links, function(index, value) {                            
+                        event_data += '<tr>';
+                        event_data += '<td><a href="' + value.url + '">' + value.url + '</td>';
+                        event_data += '<td><a href="' + '{% url "redirect" shortened_url=123 %}'.replace(/123/, value.shortened_url) + '">' + value.shortened_url + '</td>';
+                        event_data += '<td>' + value.created_at.slice(0, -8) + '</td>';
+                        event_data += '<td>' + value.expires_at.slice(0, -8) + '</td>';
+                        event_data += '</tr>';
+                    });
+                    $("#links-table").append(event_data);
+                },
+                error: function(d) {
+                }
             });
+        });
+
+        function refreshPage() {
+            window.location.reload();
+        } 
+
     </script>
     {% endblock javascript %}
 {% endblock %}

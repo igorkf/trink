@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Home
+    Trink
 {% endblock %}
 
 {% block content %}
-    <h1>Trink - um encurtador de links</h1>
+    <h1>Trink</h1>
 
     {% if user.is_authenticated %}        
-        <p><a href="{% url 'logout' %}">Logout</a></p>
+        <p><a href="{% url 'logout' %}">Fazer logout</a></p>
     {% else %}
         <p>Você não está logado.</p>
-        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'login' %}">Fazer login</a>
+        <br>
+        <a href="{% url 'signup' %}">Criar uma conta</a>
     {% endif %}
 {% endblock %}

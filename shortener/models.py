@@ -7,9 +7,12 @@ from django.utils import timezone
 
 # Create your models here.
 
+EXPIRATION_DAYS = 7
+DOMAIN = 'https://trink.com.br/'
+
 
 def timezone_delta():
-    return timezone.now() + timezone.timedelta(days=7)
+    return timezone.now() + timezone.timedelta(days=EXPIRATION_DAYS)
 
 
 class Link(models.Model):
@@ -24,11 +27,9 @@ class Link(models.Model):
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     expires_at = models.DateTimeField(
         default=timezone_delta, editable=False)
-    expired = models.BooleanField(default=False, editable=False)
 
     def encode(self, id_):
         '''62 chars encoder'''
-        domain = 'https://trink.com.br/'
         characters = string.digits + string.ascii_letters
         base = len(characters)
 
@@ -38,7 +39,7 @@ class Link(models.Model):
             result.append(characters[val])
             id_ = id_ // base
 
-        return domain + ''.join(result[::-1])
+        return DOMAIN + ''.join(result[::-1])
 
     def save(self, *args, **kwargs):
         id_digits = int(1e8)

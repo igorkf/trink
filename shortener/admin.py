@@ -7,9 +7,11 @@ from .models import Link
 
 class LinkAdmin(admin.ModelAdmin):
     list_display = ('url', 'shortened_url', 'created_by',
-                    'created_at', 'expires_at', 'expired')
+                    'created_at', 'expires_at')
+
 
 class CustomUserAdmin(admin.ModelAdmin):
     pass
+
 
 admin.site.register(Link, LinkAdmin)

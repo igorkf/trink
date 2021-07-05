@@ -11,8 +11,9 @@
 
     {% if user.is_authenticated %}  
         <form action="." method="post" id="shorten-url">
-            <label for="nome">URL:</label>
+            <label for="url">URL:</label>
             <input type="text" name='url_input'/>
+            <br>
                 {% csrf_token %} {{ form.as_p }}
                 <button type="submit" id="submit-button" onClick="refreshPage()">Encurtar link</button>
         </form>
@@ -48,9 +49,7 @@
                 type: 'post',
                 dataType: 'json',
                 data: $('form#shorten-url').serialize(),
-                success: function(data) {
-                    console.log(data);
-                }
+                success: function(data) {}
             });
         });
 
@@ -72,8 +71,7 @@
                     });
                     $("#links-table").append(event_data);
                 },
-                error: function(d) {
-                }
+                error: function(d) {}
             });
         });
 

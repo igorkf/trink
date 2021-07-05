@@ -1,11 +1,12 @@
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 
-from .models import Link
+from .models import Link, EXPIRATION_DAYS, DOMAIN
 from .serializers import LinkSerializer
 
 
@@ -13,8 +14,11 @@ class LinksView(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request, format=None):
-        links = Link.objects.all()
+        now = timezone.now() + timezone.timedelta(days=EXPIRATION_DAYS)
+
+        links = Link.objects.filter(expires_at__lt=now)
         serializer = LinkSerializer(links, many=True)
+
         return Response({'links': serializer.data})
 
 

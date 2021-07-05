@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('links/', views.LinksView.as_view(), name='links'),
+    path('redirect/<path:shortened_url>', views.RedirectView.as_view()),
     path('shortener/', views.ShortenerView.as_view())
 ]

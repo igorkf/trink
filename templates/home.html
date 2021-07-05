@@ -9,9 +9,16 @@
 {% block content %}
     <h1>Trink</h1>
 
-    {% if user.is_authenticated %}        
-        <h2>Links encurtados:</h2>
+    {% if user.is_authenticated %}  
+        <h2>Encurtar link:</h2>
+        <form action="{% url 'shortener' %}" method="post">
+            <label for="nome">URL:</label>
+            <input type="text" name='url_input'/>
+                {% csrf_token %} {{ form.as_p }}
+                <button type="submit" id="shorten-url">Encurtar link</button>
+        </form>
 
+        <h2>Links encurtados:</h2>
         <table id="links-table">
              <thead>
                 <tr>
@@ -31,8 +38,22 @@
         <a href="{% url 'signup' %}">Criar uma conta</a>
     {% endif %}
 
-    {% block javascript%}
+    {% block javascript %}
+
     <script>
+        {% comment %} $(function() {
+            $("#shorten-url").click(function() {
+                $.post(
+                    url: '{% url "shortener" %}',
+                    data: {'url': 'abcde'}
+                    success: function(data, status, xhr) {
+                       console.log(data)
+                    }
+                );
+                return false;
+            });
+        }); {% endcomment %}
+
         $(function() {
             $.ajax({
                     url: '{% url "links" %}',
@@ -52,7 +73,6 @@
                         $("#links-table").append(event_data);
                     },
                     error: function(d) {
-                        alert("404. Please wait.");
                     }
                 });
             });

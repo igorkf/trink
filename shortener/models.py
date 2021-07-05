@@ -1,6 +1,7 @@
 import string
 
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 
 
@@ -14,8 +15,12 @@ def timezone_delta():
 class Link(models.Model):
     url = models.CharField(max_length=200)
     shortened_url = models.CharField(max_length=100, editable=False)
-    # TODO: make relation with User model
-    created_by = models.CharField(max_length=100)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='created_by',
+        db_column='created_by'
+    )
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     expires_at = models.DateTimeField(
         default=timezone_delta, editable=False)

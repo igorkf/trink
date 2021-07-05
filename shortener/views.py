@@ -19,13 +19,16 @@ class LinksView(APIView):
 
 
 class ShortenerView(APIView):
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     def post(self, request, format=None):
-        payload = {
-            'url': request.query_params.get('url'),
-            'created_by': request.query_params.get('created_by')
+        data = {
+            'url': request.data.get('url_input', ''),
+            'created_by': self.request.user.id
         }
 
-        serializer = LinkSerializer(data=payload)
+        serializer = LinkSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -35,9 +38,11 @@ class ShortenerView(APIView):
 class RedirectView(APIView):
     def get(self, request, shortened_url, format=None):
         shortened_url = self.kwargs.get('shortened_url')
+        user_id = self.request.user.id
 
         try:
-            filtered_link = Link.objects.get(shortened_url=shortened_url)
+            filtered_link = Link.objects.filter(
+                shortened_url=shortened_url, created_by=user_id).first()
             original_url = filtered_link.url
         except Link.DoesNotExist:
             context = {

@@ -1,5 +1,4 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -41,7 +40,9 @@ class RedirectView(APIView):
             filtered_link = Link.objects.get(shortened_url=shortened_url)
             original_url = filtered_link.url
         except Link.DoesNotExist:
-            context = {'shortened_url': shortened_url}
-            return render(request, '')
-        
+            context = {
+                'detail': f'A URL {shortened_url} não foi encontrada ou ainda não foi encurtada.'
+            }
+            return Response(context)
+
         return HttpResponseRedirect(redirect_to=original_url)

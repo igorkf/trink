@@ -33,7 +33,7 @@
 
     {% block javascript%}
     <script>
-        $(document).ready(function(){
+        $(function() {
             $.ajax({
                     url: '{% url "links" %}',
                     dataType: 'json',
@@ -41,10 +41,10 @@
                     cache: false,
                     success: function(data) {
                         var event_data = '';
-                        $.each(data.links, function(index, value) {
+                        $.each(data.links, function(index, value) {                            
                             event_data += '<tr>';
                             event_data += '<td><a href="' + value.url + '">' + value.url + '</td>';
-                            event_data += '<td><a href="' + '/api/redirect/' + value.shortened_url + '">' + value.shortened_url + '</td>';
+                            event_data += '<td><a href="' + '{% url "redirect" shortened_url=123 %}'.replace(/123/, value.shortened_url) + '">' + value.shortened_url + '</td>';
                             event_data += '<td>' + value.created_at.slice(0, -8) + '</td>';
                             event_data += '<td>' + value.expires_at.slice(0, -8) + '</td>';
                             event_data += '</tr>';

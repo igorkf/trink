@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
     Trink
 {% endblock %}
@@ -7,24 +9,25 @@
 {% block content %}
     <h1>Trink</h1>
 
-    {% if user.is_authenticated %}        
-        <h2>Links encurtados:</h2>
+    {% if user.is_authenticated %}  
+        <form action="." method="post" id="shorten-url">
+            <label for="url">URL:</label>
+            <input type="text" name='url_input'/>
+            <br>
+                {% csrf_token %} {{ form.as_p }}
+                <button type="submit" id="submit-button" onClick="refreshPage()">Encurtar link</button>
+        </form>
 
-        <table>
-            <tr>
-                <th>URL</th>
-                <th>URL encurtada</th>
-                <th>Criada em</th>
-                <th>Expira em</th>
-                {% for link in links %} %}
-                    <tr>
-                        <td>{{ link.url }}</td>
-                        <td>{{ link.shortened_url }}</td>
-                        <td>{{ link.created_at|date:'Y-m-d H:i' }}</td>
-                        <td>{{ link.expires_at|date:'Y-m-d H:i' }}</td>
-                    </tr>
-                {% endfor %}
-            </tr> 
+        <h2>Links encurtados:</h2>
+        <table id="links-table">
+             <thead>
+                <tr>
+                    <th>URL</th>
+                    <th>URL encurtada</th>
+                    <th>Criada em</th>
+                    <th>Expira em</th>
+                </tr>
+            </thead>
         </table>
         <p><a href="{% url 'logout' %}">Fazer logout</a></p>
         
@@ -34,4 +37,48 @@
         <br>
         <a href="{% url 'signup' %}">Criar uma conta</a>
     {% endif %}
+
+    {% block javascript %}
+
+    <script>
+        
+        $('#submit-button').click(function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '{% url "shortener" %}',
+                type: 'post',
+                dataType: 'json',
+                data: $('form#shorten-url').serialize(),
+                success: function(data) {}
+            });
+        });
+
+        $(function() {
+            $.ajax({
+                url: '{% url "links" %}',
+                dataType: 'json',
+                type: 'get',
+                cache: false,
+                success: function(data) {
+                    var event_data = '';
+                    $.each(data.links, function(index, value) {                            
+                        event_data += '<tr>';
+                        event_data += '<td><a href="' + value.url + '">' + value.url + '</td>';
+                        event_data += '<td><a href="' + '{% url "redirect" shortened_url=123 %}'.replace(/123/, value.shortened_url) + '">' + value.shortened_url + '</td>';
+                        event_data += '<td>' + value.created_at.slice(0, -8) + '</td>';
+                        event_data += '<td>' + value.expires_at.slice(0, -8) + '</td>';
+                        event_data += '</tr>';
+                    });
+                    $("#links-table").append(event_data);
+                },
+                error: function(d) {}
+            });
+        });
+
+        function refreshPage() {
+            window.location.reload();
+        } 
+
+    </script>
+    {% endblock javascript %}
 {% endblock %}

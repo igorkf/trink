@@ -3,8 +3,8 @@ from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.reverse import reverse
-from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Link, EXPIRATION_DAYS, DOMAIN
 from .serializers import LinkSerializer
@@ -12,6 +12,7 @@ from .serializers import LinkSerializer
 
 class LinksView(APIView):
     renderer_classes = [JSONRenderer]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
         now = timezone.now() + timezone.timedelta(days=EXPIRATION_DAYS)
@@ -23,8 +24,7 @@ class LinksView(APIView):
 
 
 class ShortenerView(APIView):
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
         data = {
@@ -41,6 +41,8 @@ class ShortenerView(APIView):
 
 class RedirectView(APIView):
     def get(self, request, shortened_url, format=None):
+        permission_classes = (IsAuthenticated,)
+
         shortened_url = self.kwargs.get('shortened_url')
         user_id = self.request.user.id
 

@@ -1,8 +1,12 @@
 ## Trink
 
-Um encurtador de links
+### Um encurtador de links
 
-[![Demonstração](https://ezgif.com/video-to-gif/ezgif-2-115ccd593475.mov)](https://ezgif.com/video-to-gif/ezgif-2-115ccd593475.mov)
+Clique na imagem abaixo para ver uma demonstração.   
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=TMeFudIt3gQ"><img src="https://imgur.com/yKHD9RU.png" alt="IMAGE ALT TEXT"></a>
+</div>
 
 
 ## Como testar localmente

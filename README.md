@@ -27,6 +27,12 @@ Instale as bibliotecas:
 pip3 install -r requirements.txt
 ```
 
+Rode as migrações:
+```shell
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
 Inicie o *webserver*:
 ```shell
 python3 manage.py runserver

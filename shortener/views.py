@@ -17,7 +17,8 @@ class LinksView(APIView):
     def get(self, request, format=None):
         now = timezone.now() + timezone.timedelta(days=EXPIRATION_DAYS)
 
-        links = Link.objects.filter(expires_at__lt=now)
+        links = Link.objects.filter(
+            expires_at__lt=now, created_by=self.request.user.id)
         serializer = LinkSerializer(links, many=True)
 
         return Response({'links': serializer.data})
